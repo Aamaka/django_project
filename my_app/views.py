@@ -1,59 +1,122 @@
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, APIView
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from my_app.models import Book, Publisher
 from my_app.serializer import BookSerializer, PublisherSerializer
 
 
-@api_view(['GET', 'POST'])
-def book_list(request):
-    if request.method == 'GET':
+class BookList(APIView):
+    def get(self, request):
         queryset = Book.objects.all()
-        serializer = BookSerializer(queryset, many=True, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    elif request.method == 'POST':
+        serializer = BookSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
         serializer = BookSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
-def book_details(request, pk):
-    # try:
-    # book = Book.objects.get(isbn=pk)
-    query_set = get_object_or_404(Book, isbn=pk)
-    if request.method == 'GET':
+# @api_view(['GET', 'POST'])
+# def book_list(request):
+#     if request.method == 'GET':
+#         queryset = Book.objects.all()
+#         serializer = BookSerializer(queryset, many=True, context={'request': request})
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+#     elif request.method == 'POST':
+#         serializer = BookSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+#
+class BookDetails(APIView):
+    def get(self, request, pk):
+        query_set = get_object_or_404(Book, isbn=pk)
         serializer = BookSerializer(query_set, context={'request': request})
         return Response(serializer.data)
-    elif request.method == ('PUT', 'PATCH'):
+
+    def patch(self, request, pk):
+        query_set = get_object_or_404(Book, isbn=pk)
         serializer = BookSerializer(query_set, data=request.data, partial=True, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
-    elif request.method == 'DELETE':
+
+    def delete(self, request, pk):
+        query_set = get_object_or_404(Book, isbn=pk)
         query_set.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-        # except Book.DoesNotExist:
-        # return Response('error: could not find resource', status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view()
-def publisher_list(request):
-    queryset = Publisher.objects.all()
-    serializer = PublisherSerializer(queryset, many=True)
-    return Response(serializer.data)
+# @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+# def book_details(request, pk):
+#     # try:
+#     # book = Book.objects.get(isbn=pk)
+#     query_set = get_object_or_404(Book, isbn=pk)
+#     if request.method == 'GET':
+#         serializer = BookSerializer(query_set, context={'request': request})
+#         return Response(serializer.data)
+#     elif request.method == ('PUT', 'PATCH'):
+#         serializer = BookSerializer(query_set, data=request.data, partial=True, context={'request': request})
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response(serializer.validated_data, status=status.HTTP_200_OK)
+#     elif request.method == 'DELETE':
+#         query_set.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+#         # except Book.DoesNotExist:
+#         # return Response('error: could not find resource', status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view()
-def publisher_details(request, pk):
-    try:
-        publisher = Publisher.objects.get(pk=pk)
-        serializer = PublisherSerializer(publisher)
+class PublisherList(APIView):
+    def get(self, request):
+        queryset = Publisher.objects.all()
+        serializer = PublisherSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
-    except Publisher.DoesNotExist:
-        return Response({"error": "could not find resource"}, status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request):
+        serializer = PublisherSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+
+
+#
+# @api_view()
+# def publisher_list(request):
+#     queryset = Publisher.objects.all()
+#     serializer = PublisherSerializer(queryset, many=True)
+#     return Response(serializer.data)
+
+
+class PublisherDetails(APIView):
+    def get(self, request, pk):
+        query_set = get_object_or_404(Publisher, pk=pk)
+        serializer = PublisherSerializer(query_set, context={'request': request})
+        return Response(serializer.data)
+
+    def patch(self, request, pk):
+        query_set = get_object_or_404(Publisher, pk=pk)
+        serializer = PublisherSerializer(query_set, data=request.data, partial=True, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+    def delete(self, request, pk):
+        query_set = get_object_or_404(Publisher, pk=pk)
+        query_set.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+# @api_view()
+# def publisher_details(request, pk):
+#     try:
+#         publisher = Publisher.objects.get(pk=pk)
+#         serializer = PublisherSerializer(publisher)
+#         return Response(serializer.data)
+#     except Publisher.DoesNotExist:
+#         return Response({"error": "could not find resource"}, status=status.HTTP_404_NOT_FOUND)
 
 #
 #

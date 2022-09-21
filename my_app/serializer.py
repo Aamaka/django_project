@@ -15,14 +15,9 @@ class PublisherSerializer(serializers.ModelSerializer):
 
 
 class BookSerializer(serializers.ModelSerializer):  # noqa
-    # book_title = serializers.CharField(max_length=255,source='title')
-    # publisher = PublisherSerializer()
-    publisher = serializers.HyperlinkedRelatedField(
-        queryset=Publisher.objects.all(),
-        view_name="my_app:publisher-details"
-    )
+    book_title = serializers.CharField(max_length=255, source='title')
 
     class Meta:
         model = Book
         # fields = "__all__"
-        fields = ["title", "description", "isbn", "price", "", "publisher"]
+        fields = ["book_title", "description", "isbn", "price", "publisher"]

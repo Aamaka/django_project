@@ -7,10 +7,10 @@ urlpatterns = [
     # path('', views.index, name='redirect_to_about'),
     # path('redirect/', views.redirect),
     # path('about/', views.about, name='about'),
-    path('book-list/', views.book_list, name='book-list'),
+    path('book-list/', views.BookList.as_view(), name='book-list'),
     # path('book-detail/<int:pk>/', views.book_detail, name='book-detail'),
-    path('book-detail/<int:pk>/', views.book_details, name='book-detail'),
-    path('publishers/', views.publisher_list, name='publisher'),
-    path('publisher_details/<pk>/', views.publisher_details, name='publisher_details'),
+    path('book-detail/<int:pk>/', views.BookDetails.as_view(), name='book-detail'),
+    path('publishers/', views.PublisherList.as_view(), name='publisher'),
+    path('publisher_details/<int:pk>/', views.PublisherDetails.as_view(), name='publisher_details'),
 ]
 
